@@ -15,11 +15,12 @@
 <body>
   <canvas id="scene" aria-label="Your character sinking upside down through bright blue water"></canvas>
   <div class="fallback">This scene needs WebGL 2. Try an up-to-date Chrome, Edge or Firefox.</div>
-  <iframe id="bgm" src="https://www.youtube.com/embed/zlM4cKcqTSI?autoplay=1&mute=1&loop=1&playlist=zlM4cKcqTSI&enablejsapi=1" allow="autoplay" style="display:none" title="Background music"></iframe>
+  <iframe id="bgm" src="https://www.youtube.com/embed/zlM4cKcqTSI?autoplay=1&mute=1&loop=1&playlist=zlM4cKcqTSI&enablejsapi=1" allow="autoplay" style="position:fixed;left:-9999px;top:-9999px;width:2px;height:2px;border:0" title="Background music"></iframe>
   <script>
     (function () {
       var bgm = document.getElementById('bgm');
       var alive = false, audible = false, kicks = 0;
+      var muted = null, ps = -1;
       function send(func, args) {
         if (bgm.contentWindow) {
           bgm.contentWindow.postMessage(JSON.stringify({ event: 'command', func: func, args: args || [] }), '*');
@@ -39,8 +40,10 @@
           alive = true;
           kick();
         }
-        if (d.event === 'infoDelivery' && d.info && d.info.muted === false && d.info.playerState === 1) {
-          audible = true;
+        if (d.event === 'infoDelivery' && d.info) {
+          if (typeof d.info.muted === 'boolean') muted = d.info.muted;
+          if (typeof d.info.playerState === 'number') ps = d.info.playerState;
+          if (muted === false && ps === 1) audible = true;
         }
       });
       bgm.addEventListener('load', function () {
