@@ -15,20 +15,46 @@
 <body>
   <canvas id="scene" aria-label="Your character sinking upside down through bright blue water"></canvas>
   <div class="fallback">This scene needs WebGL 2. Try an up-to-date Chrome, Edge or Firefox.</div>
-  <iframe id="bgm" src="https://www.youtube.com/embed/zlM4cKcqTSI?autoplay=1&mute=1&start=124&loop=1&playlist=zlM4cKcqTSI&enablejsapi=1" allow="autoplay" style="display:none" title="Background music"></iframe>
+  <iframe id="bgm" src="https://www.youtube.com/embed/zlM4cKcqTSI?autoplay=1&mute=1&loop=1&playlist=zlM4cKcqTSI&enablejsapi=1" allow="autoplay" style="display:none" title="Background music"></iframe>
   <script>
     (function () {
       var bgm = document.getElementById('bgm');
-      function cmd(func) {
+      var alive = false, audible = false, kicks = 0;
+      function send(func, args) {
         if (bgm.contentWindow) {
-          bgm.contentWindow.postMessage(JSON.stringify({ event: 'command', func: func, args: [] }), '*');
+          bgm.contentWindow.postMessage(JSON.stringify({ event: 'command', func: func, args: args || [] }), '*');
         }
       }
-      function start() { cmd('playVideo'); cmd('unMute'); }
-      ['pointerdown', 'keydown', 'touchstart'].forEach(function (type) {
-        window.addEventListener(type, start, { once: true, passive: true });
+      function kick() {
+        send('playVideo');
+        send('unMute');
+        send('setVolume', [100]);
+      }
+      window.addEventListener('message', function (e) {
+        if (!bgm.contentWindow || e.source !== bgm.contentWindow) return;
+        var d = e.data;
+        if (typeof d === 'string') { try { d = JSON.parse(d); } catch (_) { return; } }
+        if (!d || typeof d.event !== 'string') return;
+        if (!alive && (d.event === 'onReady' || d.event === 'initialDelivery' || d.event === 'infoDelivery')) {
+          alive = true;
+          kick();
+        }
+        if (d.event === 'infoDelivery' && d.info && d.info.muted === false && d.info.playerState === 1) {
+          audible = true;
+        }
       });
-      window.addEventListener('load', function () { setTimeout(function () { cmd('unMute'); }, 1500); });
+      bgm.addEventListener('load', function () {
+        setTimeout(function () {
+          if (bgm.contentWindow) bgm.contentWindow.postMessage(JSON.stringify({ event: 'listening' }), '*');
+        }, 300);
+      });
+      ['pointerdown', 'keydown', 'touchstart'].forEach(function (type) {
+        window.addEventListener(type, function () { if (!audible) kick(); }, { passive: true });
+      });
+      var timer = setInterval(function () {
+        if (audible || ++kicks > 40) { clearInterval(timer); return; }
+        kick();
+      }, 1500);
     })();
   </script>
   <script src="character-data.js"></script>
