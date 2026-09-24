@@ -1,0 +1,5 @@
+{
+  "motion": { "type": "slider", "text": "Motion", "min": 0, "max": 150, "step": 5, "value": 100, "help": "How much the hair, robe and body drift" },
+  "interactive": { "type": "checkbox", "text": "React to the mouse", "value": true, "help": "Needs Lively's wallpaper input set to Mouse" },
+  "intro": { "type": "checkbox", "text": "Play the plunge intro", "value": true }
+}

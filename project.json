@@ -1,0 +1,15 @@
+{
+  "title": "Persona",
+  "description": "Your character in the Persona 3 Reload pause-screen water. Blinks, drifts, follows the cursor; stir the water with the mouse and click for ripples. Works offline.",
+  "type": "web",
+  "file": "index.html",
+  "preview": "preview.jpg",
+  "version": 0,
+  "general": {
+    "properties": {
+      "motion": { "order": 0, "text": "Motion", "type": "slider", "value": 100, "min": 0, "max": 150, "step": 5 },
+      "interactive": { "order": 1, "text": "React to the mouse", "type": "bool", "value": true },
+      "intro": { "order": 2, "text": "Play the plunge intro", "type": "bool", "value": true }
+    }
+  }
+}

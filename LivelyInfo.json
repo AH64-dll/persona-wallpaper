@@ -1,0 +1,14 @@
+{
+  "AppVersion": "2.0.0.0",
+  "Title": "Persona",
+  "Thumbnail": "preview.jpg",
+  "Preview": null,
+  "Desc": "Your character in the Persona 3 Reload pause-screen water. Blinks, drifts, follows the cursor; stir the water with the mouse and click for ripples. Works offline.",
+  "Author": "",
+  "Contact": null,
+  "Type": 1,
+  "FileName": "index.html",
+  "Arguments": null,
+  "IsAbsolutePath": false,
+  "Version": 2
+}
